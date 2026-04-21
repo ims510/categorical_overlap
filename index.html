@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Categorical Stability across Treebanks</title>
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: #f8f9fa;
+      color: #212529;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a1a2e;
+      color: #eee;
+      padding: 2rem 2.5rem 1.5rem;
+      border-bottom: 3px solid #e63946;
+    }
+    header h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: .4rem; }
+    header p  { font-size: .95rem; opacity: .75; max-width: 65ch; line-height: 1.5; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    .stats-bar {
+      display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    .stat {
+      background: #fff; border-radius: 8px; padding: .9rem 1.4rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      flex: 1; min-width: 140px;
+    }
+    .stat .label { font-size: .75rem; text-transform: uppercase;
+                   letter-spacing: .05em; color: #6c757d; margin-bottom: .2rem; }
+    .stat .value { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; }
+
+    #chart { width: 100%; background: #fff; border-radius: 10px;
+             box-shadow: 0 1px 4px rgba(0,0,0,.08); margin-bottom: 2rem; }
+
+    .search-row {
+      display: flex; align-items: center; gap: .75rem; margin-bottom: 1.2rem;
+    }
+    #search {
+      flex: 1; padding: .55rem .9rem; border: 1px solid #ced4da;
+      border-radius: 6px; font-size: .95rem;
+    }
+    #search:focus { outline: 2px solid #4361ee; border-color: transparent; }
+
+    table { width: 100%; border-collapse: collapse; background: #fff;
+            border-radius: 10px; overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+    thead th {
+      background: #1a1a2e; color: #eee;
+      padding: .7rem 1rem; text-align: left;
+      font-size: .85rem; font-weight: 600;
+      cursor: pointer; user-select: none;
+    }
+    thead th:hover { background: #2d2d52; }
+    thead th.sorted::after { content: " ↕"; opacity: .6; }
+    tbody tr { border-bottom: 1px solid #f0f0f0; transition: background .15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f0f4ff; }
+    tbody td { padding: .65rem 1rem; font-size: .9rem; }
+
+    .was-bar {
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .was-track {
+      flex: 1; height: 8px; background: #e9ecef;
+      border-radius: 4px; overflow: hidden; min-width: 80px;
+    }
+    .was-fill { height: 100%; border-radius: 4px; }
+    .was-val { font-variant-numeric: tabular-nums; font-size: .85rem;
+               font-weight: 600; min-width: 3.5ch; }
+
+    .btn-detail {
+      display: inline-block; padding: .3rem .75rem;
+      background: #4361ee; color: #fff; border-radius: 5px;
+      text-decoration: none; font-size: .82rem; font-weight: 600;
+      transition: background .15s;
+    }
+    .btn-detail:hover { background: #3451d1; }
+
+    .badge {
+      display: inline-block; padding: .15rem .5rem;
+      border-radius: 999px; font-size: .75rem; font-weight: 600;
+    }
+
+    footer { text-align: center; padding: 2rem; color: #aaa; font-size: .82rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Categorical Stability across Universal Dependencies Treebanks</h1>
+  <p>
+    The <strong>Weighted Average Stability (WAS)</strong> score measures how consistently
+    each POS category is distributed across its neighbourhood in feature space.
+    A score near 1 means every category has a tight, homogeneous neighbourhood;
+    lower scores indicate more cross-categorical overlap.
+    Click any treebank to explore its stability and intruder matrices, and to
+    inspect the bridge words that link categories.
+  </p>
+</header>
+
+<div class="container">
+
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat"><div class="label">Treebanks</div><div class="value" id="s-total">—</div></div>
+    <div class="stat"><div class="label">Mean WAS</div><div class="value" id="s-mean">—</div></div>
+    <div class="stat"><div class="label">Highest WAS</div><div class="value" id="s-max">—</div></div>
+    <div class="stat"><div class="label">Lowest WAS</div><div class="value" id="s-min">—</div></div>
+  </div>
+
+  <div id="chart"></div>
+
+  <div class="search-row">
+    <input id="search" type="text" placeholder="Filter treebanks…" />
+    <span id="count-label" style="font-size:.85rem;color:#6c757d;"></span>
+  </div>
+
+  <table id="table">
+    <thead>
+      <tr>
+        <th data-col="rank">#</th>
+        <th data-col="name">Treebank</th>
+        <th data-col="was">WAS Score</th>
+        <th data-col="n_categories">Categories</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<footer>
+  Data generated with <a href="https://github.com/UniversalDependencies" style="color:#4361ee">Universal Dependencies</a> treebanks.
+</footer>
+
+<script>
+// ── colour helper ──────────────────────────────────────────────────────────
+function wasColour(v) {
+  // green (high) → yellow → red (low), clamped to [0.6, 1.0]
+  const t = Math.max(0, Math.min(1, (v - 0.6) / 0.4));
+  const r = Math.round(255 * (1 - t));
+  const g = Math.round(200 * t + 50);
+  return `rgb(${r},${g},60)`;
+}
+
+let allData = [];
+let sortCol = "was", sortAsc = false;
+
+async function load() {
+  const res  = await fetch("data/index.json");
+  allData    = await res.json();
+  allData.forEach((d, i) => d.rank = i + 1);
+
+  // Stats bar
+  const was   = allData.map(d => d.was);
+  const mean  = was.reduce((a,b) => a+b, 0) / was.length;
+  document.getElementById("s-total").textContent = allData.length;
+  document.getElementById("s-mean").textContent  = mean.toFixed(3);
+  document.getElementById("s-max").textContent   = Math.max(...was).toFixed(3);
+  document.getElementById("s-min").textContent   = Math.min(...was).toFixed(3);
+
+  renderChart(allData);
+  renderTable(allData);
+}
+
+// ── dot-plot chart ─────────────────────────────────────────────────────────
+function renderChart(data) {
+  const sorted = [...data].sort((a, b) => a.was - b.was);
+  const meanV  = sorted.reduce((s,d) => s + d.was, 0) / sorted.length;
+
+  const trace = {
+    type: "scatter",
+    mode: "markers",
+    x: sorted.map(d => d.was),
+    y: sorted.map(d => d.name),
+    text: sorted.map(d => `${d.name}<br>WAS: ${d.was.toFixed(3)}`),
+    hoverinfo: "text",
+    marker: {
+      size: 9,
+      color: sorted.map(d => d.was),
+      colorscale: [
+        [0,   "rgb(215,48,39)"],
+        [0.5, "rgb(255,215,0)"],
+        [1,   "rgb(26,152,80)"],
+      ],
+      cmin: 0.6, cmax: 1.0,
+      line: { width: 1, color: "#555" },
+    },
+    customdata: sorted.map(d => d.name),
+  };
+
+  const layout = {
+    height: Math.max(400, sorted.length * 16 + 80),
+    margin: { l: 160, r: 40, t: 20, b: 50 },
+    xaxis: {
+      title: "Weighted Average Stability (WAS)",
+      range: [Math.min(...sorted.map(d=>d.was)) - 0.05, 1.02],
+      gridcolor: "#e9ecef",
+    },
+    yaxis: { automargin: true, tickfont: { size: 11 } },
+    shapes: [{
+      type: "line", x0: meanV, x1: meanV, y0: 0, y1: 1,
+      xref: "x", yref: "paper",
+      line: { color: "#555", dash: "dash", width: 1.5 },
+    }],
+    annotations: [{
+      x: meanV, y: 1.01, xref: "x", yref: "paper",
+      text: `mean ${meanV.toFixed(3)}`, showarrow: false,
+      font: { size: 11, color: "#555" },
+    }],
+    paper_bgcolor: "#fff",
+    plot_bgcolor: "#fff",
+    hovermode: "closest",
+  };
+
+  const config = { responsive: true, displayModeBar: false };
+
+  Plotly.newPlot("chart", [trace], layout, config).then(gd => {
+    gd.on("plotly_click", ev => {
+      const name = ev.points[0].customdata;
+      window.location.href = `treebank.html?tb=${encodeURIComponent(name)}`;
+    });
+    gd.style.cursor = "pointer";
+  });
+}
+
+// ── sortable table ─────────────────────────────────────────────────────────
+function renderTable(data) {
+  const q     = document.getElementById("search").value.toLowerCase();
+  const rows  = data.filter(d => !q || d.name.toLowerCase().includes(q));
+
+  rows.sort((a, b) => {
+    const av = a[sortCol], bv = b[sortCol];
+    const cmp = typeof av === "string" ? av.localeCompare(bv) : av - bv;
+    return sortAsc ? cmp : -cmp;
+  });
+
+  document.getElementById("count-label").textContent =
+    `${rows.length} of ${data.length} treebanks`;
+
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = rows.map((d, i) => {
+    const fillColour = wasColour(d.was);
+    const pct = ((d.was - 0.6) / 0.4 * 100).toFixed(1);
+    return `
+      <tr>
+        <td style="color:#888;font-size:.8rem">${i+1}</td>
+        <td><strong>${d.name}</strong></td>
+        <td>
+          <div class="was-bar">
+            <div class="was-track">
+              <div class="was-fill" style="width:${pct}%;background:${fillColour}"></div>
+            </div>
+            <span class="was-val" style="color:${fillColour}">${d.was.toFixed(3)}</span>
+          </div>
+        </td>
+        <td>${d.n_categories}</td>
+        <td><a class="btn-detail" href="treebank.html?tb=${encodeURIComponent(d.name)}">Explore →</a></td>
+      </tr>`;
+  }).join("");
+}
+
+// ── search ─────────────────────────────────────────────────────────────────
+document.getElementById("search").addEventListener("input", () => renderTable(allData));
+
+// ── sorting ────────────────────────────────────────────────────────────────
+document.querySelectorAll("thead th[data-col]").forEach(th => {
+  th.addEventListener("click", () => {
+    const col = th.dataset.col;
+    if (col === sortCol) sortAsc = !sortAsc;
+    else { sortCol = col; sortAsc = col === "name"; }
+    document.querySelectorAll("thead th").forEach(t => t.classList.remove("sorted"));
+    th.classList.add("sorted");
+    renderTable(allData);
+  });
+});
+
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Treebank Explorer</title>
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: #f8f9fa; color: #212529; min-height: 100vh;
+    }
+
+    /* ── nav ── */
+    nav {
+      background: #1a1a2e; padding: .6rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    nav a { color: #aab; text-decoration: none; font-size: .9rem; }
+    nav a:hover { color: #fff; }
+    nav .sep { color: #555; }
+
+    /* ── header ── */
+    header {
+      background: #1a1a2e; color: #eee;
+      padding: 1.5rem 2.5rem 1.2rem;
+      border-bottom: 3px solid #e63946;
+    }
+    header h1 { font-size: 1.5rem; font-weight: 700; }
+    .header-meta { display: flex; gap: 1.5rem; margin-top: .5rem; flex-wrap: wrap; }
+    .meta-chip {
+      background: rgba(255,255,255,.08); border-radius: 999px;
+      padding: .2rem .75rem; font-size: .82rem; color: #ccc;
+    }
+    .meta-chip strong { color: #fff; }
+
+    /* ── layout ── */
+    .container { max-width: 1150px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    .section { margin-bottom: 2.5rem; }
+    .section-title {
+      font-size: 1rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .06em; color: #4361ee; margin-bottom: 1rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .section-title::after {
+      content: ""; flex: 1; height: 1px; background: #dee2e6;
+    }
+
+    .card {
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08); padding: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ── tabs ── */
+    .tab-row { display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .tab-btn {
+      padding: .45rem 1rem; border: 2px solid #dee2e6; border-radius: 6px;
+      background: #fff; cursor: pointer; font-size: .9rem; font-weight: 600;
+      color: #495057; transition: all .15s;
+    }
+    .tab-btn:hover { border-color: #4361ee; color: #4361ee; }
+    .tab-btn.active { background: #4361ee; border-color: #4361ee; color: #fff; }
+
+    /* ── bridge explorer ── */
+    .pair-selectors {
+      display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+      margin-bottom: 1.2rem;
+    }
+    select {
+      padding: .5rem .8rem; border: 1px solid #ced4da; border-radius: 6px;
+      font-size: .95rem; background: #fff;
+    }
+    select:focus { outline: 2px solid #4361ee; border-color: transparent; }
+    .arrow { font-size: 1.3rem; color: #e63946; font-weight: 700; }
+
+    /* ── bridge word cards ── */
+    .bridge-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: .8rem;
+    }
+    .bridge-card {
+      border: 1px solid #e9ecef; border-radius: 8px; padding: .9rem;
+      cursor: pointer; transition: box-shadow .15s, border-color .15s;
+    }
+    .bridge-card:hover { box-shadow: 0 3px 10px rgba(67,97,238,.15);
+                         border-color: #4361ee; }
+    .bridge-card.selected { border-color: #4361ee; background: #f0f4ff; }
+    .bridge-word { font-size: 1.1rem; font-weight: 700; margin-bottom: .3rem; }
+    .bridge-scores { display: flex; gap: .6rem; font-size: .78rem; color: #6c757d; }
+    .bridge-scores span strong { color: #212529; }
+
+    /* ── pulling features table ── */
+    .features-panel { margin-top: 1rem; }
+    .features-panel h4 {
+      font-size: .88rem; font-weight: 700; margin-bottom: .6rem; color: #4361ee;
+    }
+    .feat-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    .feat-table th {
+      text-align: left; padding: .4rem .6rem;
+      background: #f8f9fa; font-weight: 600; color: #495057;
+      border-bottom: 2px solid #dee2e6;
+    }
+    .feat-table td { padding: .35rem .6rem; border-bottom: 1px solid #f0f0f0; }
+    .feat-table tr:last-child td { border-bottom: none; }
+    .feat-bar-cell { min-width: 80px; }
+    .feat-bar-bg { background: #e9ecef; border-radius: 3px; height: 7px; overflow: hidden; }
+    .feat-bar-fill { height: 100%; border-radius: 3px; background: #4361ee; }
+
+    /* ── WAS comparison ── */
+    #was-compare-chart { width: 100%; }
+
+    /* ── loading / error ── */
+    #loading {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 40vh; font-size: 1.1rem; color: #6c757d;
+    }
+    #error-msg {
+      display: none; padding: 1rem 1.5rem;
+      background: #fff5f5; border-left: 4px solid #e63946;
+      border-radius: 4px; color: #c92a2a; margin-bottom: 1rem;
+    }
+
+    footer { text-align: center; padding: 2rem; color: #aaa; font-size: .82rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html">← All Treebanks</a>
+  <span class="sep">/</span>
+  <span id="nav-name" style="color:#fff"></span>
+</nav>
+
+<header>
+  <h1 id="page-title">Loading…</h1>
+  <div class="header-meta" id="header-meta"></div>
+</header>
+
+<div id="loading">Loading treebank data…</div>
+<div id="error-msg"></div>
+
+<div class="container" id="main-content" style="display:none">
+
+  <!-- ── Matrices ────────────────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">Matrices</div>
+    <div class="tab-row">
+      <button class="tab-btn active" data-matrix="stability">Stability Matrix</button>
+      <button class="tab-btn"        data-matrix="intruder">Intruder Matrix</button>
+    </div>
+    <div class="card" style="padding:.5rem">
+      <div id="matrix-chart"></div>
+    </div>
+    <p style="font-size:.82rem;color:#6c757d;margin-top:.4rem">
+      <strong>Stability:</strong> diagonal = how homogeneous each category's neighbourhood is.
+      <strong>Intruder:</strong> diagonal removed; shows which rival category draws the most mass from each row.
+    </p>
+  </div>
+
+  <!-- ── Bridge word explorer ─────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">Bridge Word Explorer</div>
+    <div class="card">
+      <div class="pair-selectors">
+        <div>
+          <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.2rem">From category</label>
+          <select id="sel-orig"></select>
+        </div>
+        <div class="arrow">→</div>
+        <div>
+          <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.2rem">Toward rival</label>
+          <select id="sel-rival"></select>
+        </div>
+        <div style="align-self:flex-end">
+          <button class="tab-btn active" id="btn-load-bridges" style="margin:0">Show bridge words</button>
+        </div>
+      </div>
+
+      <div id="bridge-content">
+        <p style="color:#6c757d;font-size:.9rem">
+          Select a category pair above and click "Show bridge words".
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WAS ranking comparison ───────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">WAS Ranking across all Treebanks</div>
+    <div class="card" style="padding:.5rem">
+      <div id="was-compare-chart"></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>Categorical stability analysis · Universal Dependencies</footer>
+
+<script>
+// ── URL parameter ──────────────────────────────────────────────────────────
+const params  = new URLSearchParams(location.search);
+const tbName  = params.get("tb") || "";
+
+document.getElementById("nav-name").textContent = tbName;
+document.getElementById("page-title").textContent = tbName;
+
+// ── State ──────────────────────────────────────────────────────────────────
+let stabilityData, intruderData, bridgePairsData, allIndex;
+let currentMatrix = "stability";
+
+// ── Fetch helpers ──────────────────────────────────────────────────────────
+async function fetchJSON(path) {
+  const r = await fetch(path);
+  if (!r.ok) throw new Error(`HTTP ${r.status} for ${path}`);
+  return r.json();
+}
+
+function showError(msg) {
+  const el = document.getElementById("error-msg");
+  el.textContent = msg;
+  el.style.display = "block";
+  document.getElementById("loading").style.display = "none";
+}
+
+// ── Main load ──────────────────────────────────────────────────────────────
+async function init() {
+  if (!tbName) { showError("No treebank specified in URL."); return; }
+
+  try {
+    [stabilityData, intruderData, bridgePairsData, allIndex] = await Promise.all([
+      fetchJSON(`data/${tbName}/stability.json`),
+      fetchJSON(`data/${tbName}/intruder.json`),
+      fetchJSON(`data/${tbName}/bridge_pairs.json`),
+      fetchJSON(`data/index.json`),
+    ]);
+  } catch (e) {
+    showError(`Could not load data for "${tbName}": ${e.message}`);
+    return;
+  }
+
+  document.getElementById("loading").style.display    = "none";
+  document.getElementById("main-content").style.display = "block";
+
+  const entry = allIndex.find(d => d.name === tbName) || {};
+  buildHeaderMeta(entry);
+  renderMatrix("stability");
+  buildCategorySelectors();
+  renderWasComparison(entry);
+}
+
+// ── Header meta chips ──────────────────────────────────────────────────────
+function buildHeaderMeta(entry) {
+  const rank = allIndex.findIndex(d => d.name === tbName) + 1;
+  document.getElementById("header-meta").innerHTML = `
+    <span class="meta-chip">WAS <strong>${(entry.was||0).toFixed(3)}</strong></span>
+    <span class="meta-chip">Rank <strong>${rank} / ${allIndex.length}</strong></span>
+    <span class="meta-chip">Categories <strong>${entry.n_categories||"—"}</strong></span>
+  `;
+}
+
+// ── Heatmap ────────────────────────────────────────────────────────────────
+function renderMatrix(which) {
+  currentMatrix = which;
+  const d     = which === "stability" ? stabilityData : intruderData;
+  const cats  = d.categories;
+  const vals  = d.values;
+
+  // Plotly needs z as rows = y-axis = Original
+  const trace = {
+    type:        "heatmap",
+    x:           cats,       // columns = Rival
+    y:           cats,       // rows    = Original
+    z:           vals,
+    colorscale:  "YlOrRd",
+    reversescale: false,
+    hoverongaps: false,
+    text:        vals.map(row => row.map(v => v.toFixed(3))),
+    texttemplate:"%{text}",
+    textfont:    { size: 11 },
+    hovertemplate: "From: %{y}<br>To: %{x}<br>Weight: %{z:.3f}<extra></extra>",
+    zmin: 0, zmax: 1,
+  };
+
+  const layout = {
+    width:  undefined,
+    height: Math.max(350, cats.length * 38 + 100),
+    margin: { l: 80, r: 30, t: 30, b: 80 },
+    xaxis:  { title: "Rival / Intruder category", automargin: true },
+    yaxis:  { title: "Original category",         automargin: true },
+    paper_bgcolor: "#fff", plot_bgcolor: "#fff",
+  };
+
+  Plotly.react("matrix-chart", [trace], layout, { responsive: true, displayModeBar: false });
+}
+
+// Matrix tab buttons
+document.querySelectorAll(".tab-btn[data-matrix]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn[data-matrix]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderMatrix(btn.dataset.matrix);
+  });
+});
+
+// ── Category selectors ─────────────────────────────────────────────────────
+function buildCategorySelectors() {
+  const cats   = stabilityData.categories;
+  const pairs  = Object.keys(bridgePairsData);  // "ORIG→RIVAL"
+  const origSet = new Set(pairs.map(p => p.split("→")[0]));
+
+  const selOrig  = document.getElementById("sel-orig");
+  const selRival = document.getElementById("sel-rival");
+
+  selOrig.innerHTML = cats
+    .filter(c => origSet.has(c))
+    .map(c => `<option value="${c}">${c}</option>`).join("");
+
+  function updateRival() {
+    const orig       = selOrig.value;
+    const rivalCats  = pairs
+      .filter(p => p.startsWith(orig + "→"))
+      .map(p => p.split("→")[1]);
+    selRival.innerHTML = rivalCats.map(c => `<option value="${c}">${c}</option>`).join("");
+  }
+
+  selOrig.addEventListener("change", updateRival);
+  updateRival();
+}
+
+// ── Bridge word display ────────────────────────────────────────────────────
+document.getElementById("btn-load-bridges").addEventListener("click", () => {
+  const orig  = document.getElementById("sel-orig").value;
+  const rival = document.getElementById("sel-rival").value;
+  const key   = `${orig}→${rival}`;
+  const words = bridgePairsData[key];
+
+  const container = document.getElementById("bridge-content");
+  if (!words || words.length === 0) {
+    container.innerHTML = `<p style="color:#6c757d">No bridge words found for <strong>${key}</strong>.</p>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <p style="margin-bottom:.8rem;font-size:.88rem;color:#6c757d">
+      ${words.length} bridge words from <strong>${orig}</strong> toward <strong>${rival}</strong>.
+      Click a word to see its defining features.
+    </p>
+    <div class="bridge-grid" id="bridge-grid"></div>
+    <div class="features-panel" id="features-panel" style="display:none"></div>
+  `;
+
+  const grid = document.getElementById("bridge-grid");
+  words.forEach((w, i) => {
+    const card = document.createElement("div");
+    card.className = "bridge-card";
+    card.innerHTML = `
+      <div class="bridge-word">${w.word}</div>
+      <div class="bridge-scores">
+        <span>Purity <strong>${w.purity.toFixed(3)}</strong></span>
+        <span>Entropy <strong>${w.entropy.toFixed(3)}</strong></span>
+      </div>`;
+    card.addEventListener("click", () => {
+      document.querySelectorAll(".bridge-card").forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+      showFeatures(w);
+    });
+    grid.appendChild(card);
+  });
+});
+
+function showFeatures(word) {
+  const panel = document.getElementById("features-panel");
+  if (!word.features || word.features.length === 0) {
+    panel.style.display = "block";
+    panel.innerHTML = `<p style="color:#6c757d;font-size:.9rem">No pulling features available for <strong>${word.word}</strong>.</p>`;
+    return;
+  }
+
+  const maxVal = Math.max(...word.features.map(f => f.unit_value));
+  const rows = word.features.map(f => {
+    const pct = maxVal > 0 ? (f.unit_value / maxVal * 100).toFixed(1) : 0;
+    return `
+      <tr>
+        <td><code style="font-size:.82rem">${f.feature}</code></td>
+        <td class="feat-bar-cell">
+          <div class="feat-bar-bg">
+            <div class="feat-bar-fill" style="width:${pct}%"></div>
+          </div>
+        </td>
+        <td style="text-align:right">${f.unit_value.toFixed(4)}</td>
+        <td style="text-align:right;color:#6c757d">${f.rival_avg.toFixed(4)}</td>
+        <td style="text-align:right;color:${f.diff < 0.05 ? '#2b8a3e' : '#c92a2a'}">${f.diff.toFixed(4)}</td>
+      </tr>`;
+  }).join("");
+
+  panel.style.display = "block";
+  panel.innerHTML = `
+    <h4>Defining features for <em>${word.word}</em></h4>
+    <table class="feat-table">
+      <thead>
+        <tr>
+          <th>Feature</th><th>Bar</th>
+          <th style="text-align:right">This word</th>
+          <th style="text-align:right">Rival avg</th>
+          <th style="text-align:right">Δ diff</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p style="font-size:.78rem;color:#6c757d;margin-top:.4rem">
+      Low Δ diff (green) = this word closely matches the rival category's prototype on this feature.
+    </p>
+  `;
+  panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+// ── WAS comparison chart ───────────────────────────────────────────────────
+function renderWasComparison(currentEntry) {
+  const sorted = [...allIndex].sort((a, b) => a.was - b.was);
+  const meanV  = sorted.reduce((s,d) => s + d.was, 0) / sorted.length;
+  const isCurrent = sorted.map(d => d.name === tbName);
+
+  const trace = {
+    type: "scatter", mode: "markers",
+    x: sorted.map(d => d.was),
+    y: sorted.map(d => d.name),
+    text: sorted.map(d => `${d.name}: ${d.was.toFixed(3)}`),
+    hoverinfo: "text",
+    marker: {
+      size: sorted.map((d, i) => isCurrent[i] ? 14 : 8),
+      color: sorted.map((d, i) =>
+        isCurrent[i] ? "#e63946" : d.was),
+      colorscale: [
+        [0, "rgb(215,48,39)"], [0.5, "rgb(255,215,0)"], [1, "rgb(26,152,80)"]
+      ],
+      cmin: 0.6, cmax: 1.0,
+      line: {
+        width: sorted.map((d, i) => isCurrent[i] ? 2.5 : .5),
+        color: sorted.map((d, i) => isCurrent[i] ? "#fff" : "#555"),
+      },
+      symbol: sorted.map((d, i) => isCurrent[i] ? "diamond" : "circle"),
+    },
+  };
+
+  const layout = {
+    height: Math.max(350, sorted.length * 14 + 80),
+    margin: { l: 160, r: 30, t: 20, b: 50 },
+    xaxis: {
+      title: "Weighted Average Stability",
+      range: [Math.min(...sorted.map(d=>d.was)) - 0.05, 1.02],
+      gridcolor: "#e9ecef",
+    },
+    yaxis: { automargin: true, tickfont: { size: 10 } },
+    shapes: [{
+      type: "line", x0: meanV, x1: meanV, y0: 0, y1: 1,
+      xref: "x", yref: "paper",
+      line: { color: "#555", dash: "dash", width: 1.5 },
+    }],
+    annotations: [{
+      x: meanV, y: 1.02, xref: "x", yref: "paper",
+      text: `mean ${meanV.toFixed(3)}`, showarrow: false,
+      font: { size: 11, color: "#555" },
+    }],
+    paper_bgcolor: "#fff", plot_bgcolor: "#fff",
+    hovermode: "closest",
+  };
+
+  Plotly.newPlot("was-compare-chart", [trace], layout,
+    { responsive: true, displayModeBar: false });
+}
+
+init();
+</script>
+</body>
+</html>
