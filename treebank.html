@@ -384,19 +384,26 @@ function renderMatrix(which) {
     x:           cats,
     y:           cats,
     z:           vals,
-    colorscale:  "YlOrRd",
+    colorscale:  [
+      [0,    "rgb(255,255,229)"],
+      [0.25, "rgb(254,217,118)"],
+      [0.5,  "rgb(254,153,41)"],
+      [0.75, "rgb(217,95,14)"],
+      [1,    "rgb(127,39,4)"],
+    ],
     hoverongaps: false,
-    text:        vals.map(row => row.map(v => v.toFixed(3))),
+    text:        vals.map(row => row.map(v => v.toFixed(2))),
     texttemplate:"%{text}",
     textfont:    { size: 11 },
-    hovertemplate: "From: %{y}<br>To: %{x}<br>Weight: %{z:.3f}<extra></extra>",
+    hovertemplate: "From: %{y}<br>To: %{x}<br>Weight: %{z:.2f}<extra></extra>",
     zmin: 0, zmax: 1,
   };
   const layout = {
     height: Math.max(350, cats.length * 38 + 100),
     margin: { l: 80, r: 30, t: 30, b: 80 },
     xaxis:  { title: "Rival / Intruder category", automargin: true },
-    yaxis:  { title: "Original category",         automargin: true },
+    yaxis:  { title: "Original category",         automargin: true,
+              autorange: "reversed" },
     paper_bgcolor: "#fff", plot_bgcolor: "#fff",
   };
 
