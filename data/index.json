@@ -2,31 +2,87 @@
   {
     "name": "French-GSD",
     "was": 0.9166,
-    "n_categories": 13
-  },
-  {
-    "name": "Italian-ISDT",
-    "was": 0.8664,
-    "n_categories": 14
+    "n_categories": 13,
+    "spaces": [
+      "syntactic"
+    ],
+    "default_space": "syntactic",
+    "was_by_space": {
+      "syntactic": 0.9166
+    }
   },
   {
     "name": "Indonesian-GSD",
     "was": 0.7997,
-    "n_categories": 13
+    "n_categories": 13,
+    "spaces": [
+      "syntactic"
+    ],
+    "default_space": "syntactic",
+    "was_by_space": {
+      "syntactic": 0.7997
+    }
   },
   {
     "name": "Japanese-GSD",
     "was": 0.7484,
-    "n_categories": 13
+    "n_categories": 13,
+    "spaces": [
+      "syntactic"
+    ],
+    "default_space": "syntactic",
+    "was_by_space": {
+      "syntactic": 0.7484
+    }
   },
   {
     "name": "Wolof-WTB",
     "was": 0.735,
-    "n_categories": 12
+    "n_categories": 12,
+    "spaces": [
+      "syntactic"
+    ],
+    "default_space": "syntactic",
+    "was_by_space": {
+      "syntactic": 0.735
+    }
+  },
+  {
+    "name": "French-Rhapsodie",
+    "was": 0.7008,
+    "n_categories": 12,
+    "spaces": [
+      "syntactic",
+      "prosodic",
+      "prosodic_foot",
+      "prosodic_group",
+      "prosodic_package",
+      "prosodic_period",
+      "prosodic_all_levels",
+      "combined"
+    ],
+    "default_space": "syntactic",
+    "was_by_space": {
+      "syntactic": 0.7008,
+      "prosodic": 0.3767,
+      "prosodic_foot": 0.3592,
+      "prosodic_group": 0.3735,
+      "prosodic_package": 0.3275,
+      "prosodic_period": 0.2736,
+      "prosodic_all_levels": 0.3384,
+      "combined": 0.5708
+    }
   },
   {
     "name": "Korean-GSD",
     "was": 0.5888,
-    "n_categories": 10
+    "n_categories": 10,
+    "spaces": [
+      "syntactic"
+    ],
+    "default_space": "syntactic",
+    "was_by_space": {
+      "syntactic": 0.5888
+    }
   }
 ]

@@ -29,25 +29,36 @@
       border-bottom: 3px solid #e63946;
     }
     header h1 { font-size: 1.5rem; font-weight: 700; }
-    .header-meta { display: flex; gap: 1.5rem; margin-top: .5rem; flex-wrap: wrap; }
+    .header-meta { display: flex; gap: 1.5rem; margin-top: .5rem; flex-wrap: wrap;
+                   align-items: center; }
     .meta-chip {
       background: rgba(255,255,255,.08); border-radius: 999px;
       padding: .2rem .75rem; font-size: .82rem; color: #ccc;
     }
     .meta-chip strong { color: #fff; }
 
+    /* ── space selector (in header) ── */
+    .space-selector {
+      display: flex; align-items: center; gap: .5rem;
+      background: rgba(255,255,255,.08); padding: .25rem .25rem .25rem .75rem;
+      border-radius: 999px;
+    }
+    .space-selector label { font-size: .78rem; color: #ccc; }
+    .space-selector select {
+      padding: .25rem .65rem; border: none; border-radius: 999px;
+      background: #fff; color: #1a1a2e; font-weight: 600;
+      font-size: .82rem; cursor: pointer;
+    }
+
     /* ── layout ── */
     .container { max-width: 1150px; margin: 0 auto; padding: 2rem 1.5rem; }
-
     .section { margin-bottom: 2.5rem; }
     .section-title {
       font-size: 1rem; font-weight: 700; text-transform: uppercase;
       letter-spacing: .06em; color: #4361ee; margin-bottom: 1rem;
       display: flex; align-items: center; gap: .5rem;
     }
-    .section-title::after {
-      content: ""; flex: 1; height: 1px; background: #dee2e6;
-    }
+    .section-title::after { content: ""; flex: 1; height: 1px; background: #dee2e6; }
 
     .card {
       background: #fff; border-radius: 10px;
@@ -77,7 +88,6 @@
     select:focus { outline: 2px solid #4361ee; border-color: transparent; }
     .arrow { font-size: 1.3rem; color: #e63946; font-weight: 700; }
 
-    /* ── bridge word cards ── */
     .bridge-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: .8rem;
@@ -93,7 +103,6 @@
     .bridge-scores { display: flex; gap: .6rem; font-size: .78rem; color: #6c757d; }
     .bridge-scores span strong { color: #212529; }
 
-    /* ── pulling features table ── */
     .features-panel { margin-top: 1rem; }
     .features-panel h4 {
       font-size: .88rem; font-weight: 700; margin-bottom: .6rem; color: #4361ee;
@@ -110,13 +119,14 @@
     .feat-bar-bg { background: #e9ecef; border-radius: 3px; height: 7px; overflow: hidden; }
     .feat-bar-fill { height: 100%; border-radius: 3px; background: #4361ee; }
 
-    /* ── WAS comparison ── */
-    #was-compare-chart { width: 100%; }
-
     /* ── loading / error ── */
     #loading {
       display: flex; align-items: center; justify-content: center;
       min-height: 40vh; font-size: 1.1rem; color: #6c757d;
+    }
+    .matrix-loading {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 200px; color: #6c757d; font-size: .9rem;
     }
     #error-msg {
       display: none; padding: 1rem 1.5rem;
@@ -145,6 +155,18 @@
 
 <div class="container" id="main-content" style="display:none">
 
+  <!-- ── Per-space WAS comparison (only shown if multiple spaces) ─────────── -->
+  <div class="section" id="space-compare-section" style="display:none">
+    <div class="section-title">WAS by Feature Space</div>
+    <div class="card" style="padding:.5rem">
+      <div id="space-compare-chart"></div>
+    </div>
+    <p style="font-size:.82rem;color:#6c757d;margin-top:.4rem">
+      Different feature spaces give different views of the same lexical units.
+      The currently selected space is highlighted in red.
+    </p>
+  </div>
+
   <!-- ── Matrices ────────────────────────────────────────────────────────── -->
   <div class="section">
     <div class="section-title">Matrices</div>
@@ -153,7 +175,7 @@
       <button class="tab-btn"        data-matrix="intruder">Intruder Matrix</button>
     </div>
     <div class="card" style="padding:.5rem">
-      <div id="matrix-chart"></div>
+      <div id="matrix-chart"><div class="matrix-loading">Loading…</div></div>
     </div>
     <p style="font-size:.82rem;color:#6c757d;margin-top:.4rem">
       <strong>Stability:</strong> diagonal = how homogeneous each category's neighbourhood is.
@@ -194,6 +216,9 @@
     <div class="card" style="padding:.5rem">
       <div id="was-compare-chart"></div>
     </div>
+    <p style="font-size:.82rem;color:#6c757d;margin-top:.4rem">
+      The chart compares treebanks on their default (syntactic) feature space.
+    </p>
   </div>
 
 </div>
@@ -201,15 +226,29 @@
 <footer>Categorical stability analysis · Universal Dependencies</footer>
 
 <script>
-// ── URL parameter ──────────────────────────────────────────────────────────
-const params  = new URLSearchParams(location.search);
-const tbName  = params.get("tb") || "";
+// ── Pretty labels for known space names ────────────────────────────────────
+const SPACE_LABELS = {
+  "syntactic":           "Syntactic",
+  "prosodic":            "Prosodic (all)",
+  "prosodic_foot":       "Prosodic — Foot",
+  "prosodic_group":      "Prosodic — Group",
+  "prosodic_package":    "Prosodic — Package",
+  "prosodic_period":     "Prosodic — Period",
+  "prosodic_all_levels": "Prosodic — All levels",
+  "combined":            "Combined (syntactic + prosodic)",
+};
+const labelFor = s => SPACE_LABELS[s] || s;
 
-document.getElementById("nav-name").textContent = tbName;
+// ── URL parameters ─────────────────────────────────────────────────────────
+const params = new URLSearchParams(location.search);
+const tbName = params.get("tb") || "";
+let currentSpace = params.get("space") || "";
+
+document.getElementById("nav-name").textContent   = tbName;
 document.getElementById("page-title").textContent = tbName;
 
 // ── State ──────────────────────────────────────────────────────────────────
-let stabilityData, intruderData, bridgePairsData, allIndex;
+let stabilityData, intruderData, bridgePairsData, allIndex, entry;
 let currentMatrix = "stability";
 
 // ── Fetch helpers ──────────────────────────────────────────────────────────
@@ -231,52 +270,121 @@ async function init() {
   if (!tbName) { showError("No treebank specified in URL."); return; }
 
   try {
-    [stabilityData, intruderData, bridgePairsData, allIndex] = await Promise.all([
-      fetchJSON(`data/${tbName}/stability.json`),
-      fetchJSON(`data/${tbName}/intruder.json`),
-      fetchJSON(`data/${tbName}/bridge_pairs.json`),
-      fetchJSON(`data/index.json`),
-    ]);
+    allIndex = await fetchJSON("data/index.json");
   } catch (e) {
-    showError(`Could not load data for "${tbName}": ${e.message}`);
+    showError(`Could not load index: ${e.message}`);
     return;
   }
 
-  document.getElementById("loading").style.display    = "none";
+  entry = allIndex.find(d => d.name === tbName);
+  if (!entry) {
+    showError(`Treebank "${tbName}" not found in index.json.`);
+    return;
+  }
+
+  // Default-space fallback for old-format index entries
+  const availableSpaces = entry.spaces || ["syntactic"];
+  if (!currentSpace || !availableSpaces.includes(currentSpace)) {
+    currentSpace = entry.default_space || availableSpaces[0];
+  }
+
+  document.getElementById("loading").style.display = "none";
   document.getElementById("main-content").style.display = "block";
 
-  const entry = allIndex.find(d => d.name === tbName) || {};
-  buildHeaderMeta(entry);
-  renderMatrix("stability");
-  buildCategorySelectors();
-  renderWasComparison(entry);
+  buildHeader(availableSpaces);
+  renderInterTreebankChart();
+  if (availableSpaces.length > 1) {
+    renderSpaceCompareChart();
+    document.getElementById("space-compare-section").style.display = "block";
+  }
+
+  await loadSpaceData();
 }
 
-// ── Header meta chips ──────────────────────────────────────────────────────
-function buildHeaderMeta(entry) {
-  const rank = allIndex.findIndex(d => d.name === tbName) + 1;
-  document.getElementById("header-meta").innerHTML = `
-    <span class="meta-chip">WAS <strong>${(entry.was||0).toFixed(3)}</strong></span>
-    <span class="meta-chip">Rank <strong>${rank} / ${allIndex.length}</strong></span>
-    <span class="meta-chip">Categories <strong>${entry.n_categories||"—"}</strong></span>
+async function loadSpaceData() {
+  // Show loading state
+  document.getElementById("matrix-chart").innerHTML =
+    '<div class="matrix-loading">Loading matrices…</div>';
+  document.getElementById("bridge-content").innerHTML =
+    '<p style="color:#6c757d;font-size:.9rem">Loading…</p>';
+
+  try {
+    [stabilityData, intruderData, bridgePairsData] = await Promise.all([
+      fetchJSON(`data/${tbName}/${currentSpace}/stability.json`),
+      fetchJSON(`data/${tbName}/${currentSpace}/intruder.json`),
+      fetchJSON(`data/${tbName}/${currentSpace}/bridge_pairs.json`),
+    ]);
+  } catch (e) {
+    showError(`Could not load space "${currentSpace}": ${e.message}`);
+    return;
+  }
+
+  renderMatrix(currentMatrix);
+  buildCategorySelectors();
+  document.getElementById("bridge-content").innerHTML = `
+    <p style="color:#6c757d;font-size:.9rem">
+      Select a category pair above and click "Show bridge words".
+    </p>`;
+}
+
+// ── Header meta + space selector ───────────────────────────────────────────
+function buildHeader(availableSpaces) {
+  const rank   = allIndex.findIndex(d => d.name === tbName) + 1;
+  const wasMap = entry.was_by_space || {};
+  const wasNow = wasMap[currentSpace] !== undefined
+    ? wasMap[currentSpace] : entry.was;
+
+  const meta = document.getElementById("header-meta");
+
+  let html = `
+    <span class="meta-chip">WAS <strong>${wasNow.toFixed(3)}</strong></span>
+    <span class="meta-chip">Rank <strong>${rank} / ${allIndex.length}</strong> <span style="opacity:.6">(default space)</span></span>
+    <span class="meta-chip">Categories <strong>${entry.n_categories ?? "—"}</strong></span>
   `;
+
+  if (availableSpaces.length > 1) {
+    const opts = availableSpaces
+      .map(s => `<option value="${s}" ${s===currentSpace?"selected":""}>${labelFor(s)}</option>`)
+      .join("");
+    html += `
+      <div class="space-selector">
+        <label>Feature space:</label>
+        <select id="sel-space">${opts}</select>
+      </div>`;
+  }
+
+  meta.innerHTML = html;
+
+  // Wire space selector
+  const sel = document.getElementById("sel-space");
+  if (sel) {
+    sel.addEventListener("change", () => {
+      currentSpace = sel.value;
+      // Update the URL so the choice is shareable / refreshable
+      const url = new URL(location.href);
+      url.searchParams.set("space", currentSpace);
+      history.replaceState(null, "", url);
+
+      buildHeader(availableSpaces);
+      renderSpaceCompareChart();
+      loadSpaceData();
+    });
+  }
 }
 
 // ── Heatmap ────────────────────────────────────────────────────────────────
 function renderMatrix(which) {
   currentMatrix = which;
-  const d     = which === "stability" ? stabilityData : intruderData;
-  const cats  = d.categories;
-  const vals  = d.values;
+  const d    = which === "stability" ? stabilityData : intruderData;
+  const cats = d.categories;
+  const vals = d.values;
 
-  // Plotly needs z as rows = y-axis = Original
   const trace = {
     type:        "heatmap",
-    x:           cats,       // columns = Rival
-    y:           cats,       // rows    = Original
+    x:           cats,
+    y:           cats,
     z:           vals,
     colorscale:  "YlOrRd",
-    reversescale: false,
     hoverongaps: false,
     text:        vals.map(row => row.map(v => v.toFixed(3))),
     texttemplate:"%{text}",
@@ -284,9 +392,7 @@ function renderMatrix(which) {
     hovertemplate: "From: %{y}<br>To: %{x}<br>Weight: %{z:.3f}<extra></extra>",
     zmin: 0, zmax: 1,
   };
-
   const layout = {
-    width:  undefined,
     height: Math.max(350, cats.length * 38 + 100),
     margin: { l: 80, r: 30, t: 30, b: 80 },
     xaxis:  { title: "Rival / Intruder category", automargin: true },
@@ -294,10 +400,12 @@ function renderMatrix(which) {
     paper_bgcolor: "#fff", plot_bgcolor: "#fff",
   };
 
-  Plotly.react("matrix-chart", [trace], layout, { responsive: true, displayModeBar: false });
+  // Clear and re-render — Plotly.react would also work but newPlot is robust
+  // after the loading-message innerHTML wipe.
+  Plotly.newPlot("matrix-chart", [trace], layout,
+    { responsive: true, displayModeBar: false });
 }
 
-// Matrix tab buttons
 document.querySelectorAll(".tab-btn[data-matrix]").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".tab-btn[data-matrix]").forEach(b => b.classList.remove("active"));
@@ -308,8 +416,8 @@ document.querySelectorAll(".tab-btn[data-matrix]").forEach(btn => {
 
 // ── Category selectors ─────────────────────────────────────────────────────
 function buildCategorySelectors() {
-  const cats   = stabilityData.categories;
-  const pairs  = Object.keys(bridgePairsData);  // "ORIG→RIVAL"
+  const cats    = stabilityData.categories;
+  const pairs   = Object.keys(bridgePairsData);
   const origSet = new Set(pairs.map(p => p.split("→")[0]));
 
   const selOrig  = document.getElementById("sel-orig");
@@ -320,14 +428,14 @@ function buildCategorySelectors() {
     .map(c => `<option value="${c}">${c}</option>`).join("");
 
   function updateRival() {
-    const orig       = selOrig.value;
-    const rivalCats  = pairs
+    const orig      = selOrig.value;
+    const rivalCats = pairs
       .filter(p => p.startsWith(orig + "→"))
       .map(p => p.split("→")[1]);
     selRival.innerHTML = rivalCats.map(c => `<option value="${c}">${c}</option>`).join("");
   }
 
-  selOrig.addEventListener("change", updateRival);
+  selOrig.onchange = updateRival;
   updateRival();
 }
 
@@ -346,7 +454,8 @@ document.getElementById("btn-load-bridges").addEventListener("click", () => {
 
   container.innerHTML = `
     <p style="margin-bottom:.8rem;font-size:.88rem;color:#6c757d">
-      ${words.length} bridge words from <strong>${orig}</strong> toward <strong>${rival}</strong>.
+      ${words.length} bridge words from <strong>${orig}</strong> toward <strong>${rival}</strong>
+      (space: <strong>${labelFor(currentSpace)}</strong>).
       Click a word to see its defining features.
     </p>
     <div class="bridge-grid" id="bridge-grid"></div>
@@ -354,7 +463,7 @@ document.getElementById("btn-load-bridges").addEventListener("click", () => {
   `;
 
   const grid = document.getElementById("bridge-grid");
-  words.forEach((w, i) => {
+  words.forEach(w => {
     const card = document.createElement("div");
     card.className = "bridge-card";
     card.innerHTML = `
@@ -379,7 +488,6 @@ function showFeatures(word) {
     panel.innerHTML = `<p style="color:#6c757d;font-size:.9rem">No pulling features available for <strong>${word.word}</strong>.</p>`;
     return;
   }
-
   const maxVal = Math.max(...word.features.map(f => f.unit_value));
   const rows = word.features.map(f => {
     const pct = maxVal > 0 ? (f.unit_value / maxVal * 100).toFixed(1) : 0;
@@ -396,7 +504,6 @@ function showFeatures(word) {
         <td style="text-align:right;color:${f.diff < 0.05 ? '#2b8a3e' : '#c92a2a'}">${f.diff.toFixed(4)}</td>
       </tr>`;
   }).join("");
-
   panel.style.display = "block";
   panel.innerHTML = `
     <h4>Defining features for <em>${word.word}</em></h4>
@@ -418,8 +525,36 @@ function showFeatures(word) {
   panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-// ── WAS comparison chart ───────────────────────────────────────────────────
-function renderWasComparison(currentEntry) {
+// ── Per-space WAS comparison ───────────────────────────────────────────────
+function renderSpaceCompareChart() {
+  const wasMap = entry.was_by_space || {};
+  const spaces = entry.spaces;
+
+  const sorted = [...spaces].sort((a, b) => (wasMap[a] || 0) - (wasMap[b] || 0));
+  const colours = sorted.map(s => s === currentSpace ? "#e63946" : "#4361ee");
+
+  const trace = {
+    type: "bar", orientation: "h",
+    x: sorted.map(s => wasMap[s] || 0),
+    y: sorted.map(labelFor),
+    marker: { color: colours },
+    text: sorted.map(s => (wasMap[s] || 0).toFixed(3)),
+    textposition: "outside",
+    hovertemplate: "%{y}<br>WAS: %{x:.3f}<extra></extra>",
+  };
+  const layout = {
+    height: Math.max(220, spaces.length * 32 + 80),
+    margin: { l: 200, r: 60, t: 10, b: 40 },
+    xaxis: { title: "WAS", range: [0, 1.05], gridcolor: "#e9ecef" },
+    yaxis: { automargin: true, tickfont: { size: 11 } },
+    paper_bgcolor: "#fff", plot_bgcolor: "#fff",
+  };
+  Plotly.newPlot("space-compare-chart", [trace], layout,
+    { responsive: true, displayModeBar: false });
+}
+
+// ── Inter-treebank WAS comparison (unchanged from before) ──────────────────
+function renderInterTreebankChart() {
   const sorted = [...allIndex].sort((a, b) => a.was - b.was);
   const meanV  = sorted.reduce((s,d) => s + d.was, 0) / sorted.length;
   const isCurrent = sorted.map(d => d.name === tbName);
@@ -432,8 +567,7 @@ function renderWasComparison(currentEntry) {
     hoverinfo: "text",
     marker: {
       size: sorted.map((d, i) => isCurrent[i] ? 14 : 8),
-      color: sorted.map((d, i) =>
-        isCurrent[i] ? "#e63946" : d.was),
+      color: sorted.map((d, i) => isCurrent[i] ? "#e63946" : d.was),
       colorscale: [
         [0, "rgb(215,48,39)"], [0.5, "rgb(255,215,0)"], [1, "rgb(26,152,80)"]
       ],
@@ -445,12 +579,11 @@ function renderWasComparison(currentEntry) {
       symbol: sorted.map((d, i) => isCurrent[i] ? "diamond" : "circle"),
     },
   };
-
   const layout = {
     height: Math.max(350, sorted.length * 14 + 80),
     margin: { l: 160, r: 30, t: 20, b: 50 },
     xaxis: {
-      title: "Weighted Average Stability",
+      title: "Weighted Average Stability (default space)",
       range: [Math.min(...sorted.map(d=>d.was)) - 0.05, 1.02],
       gridcolor: "#e9ecef",
     },
@@ -468,7 +601,6 @@ function renderWasComparison(currentEntry) {
     paper_bgcolor: "#fff", plot_bgcolor: "#fff",
     hovermode: "closest",
   };
-
   Plotly.newPlot("was-compare-chart", [trace], layout,
     { responsive: true, displayModeBar: false });
 }

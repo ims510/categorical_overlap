@@ -86,8 +86,10 @@
     .btn-detail:hover { background: #3451d1; }
 
     .badge {
-      display: inline-block; padding: .15rem .5rem;
-      border-radius: 999px; font-size: .75rem; font-weight: 600;
+      display: inline-block; padding: .15rem .55rem;
+      border-radius: 999px; font-size: .72rem; font-weight: 600;
+      background: #e7f5ff; color: #1971c2;
+      margin-left: .4rem; vertical-align: middle;
     }
 
     footer { text-align: center; padding: 2rem; color: #aaa; font-size: .82rem; }
@@ -250,10 +252,14 @@ function renderTable(data) {
   tbody.innerHTML = rows.map((d, i) => {
     const fillColour = wasColour(d.was);
     const pct = ((d.was - 0.6) / 0.4 * 100).toFixed(1);
+    const nExtra = (d.spaces ? d.spaces.length : 1) - 1;
+    const badge  = nExtra > 0
+      ? `<span class="badge" title="${d.spaces.join(', ')}">+${nExtra} ${nExtra === 1 ? 'space' : 'spaces'}</span>`
+      : '';
     return `
       <tr>
         <td style="color:#888;font-size:.8rem">${i+1}</td>
-        <td><strong>${d.name}</strong></td>
+        <td><strong>${d.name}</strong>${badge}</td>
         <td>
           <div class="was-bar">
             <div class="was-track">
