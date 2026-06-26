@@ -1,0 +1,758 @@
+[
+  {
+    "name": "French-GSD",
+    "language": "French",
+    "was": 0.9206,
+    "n_categories": 13,
+    "n_tokens": 400385
+  },
+  {
+    "name": "Catalan-AnCora",
+    "language": "Catalan",
+    "was": 0.9149,
+    "n_categories": 12,
+    "n_tokens": 547262
+  },
+  {
+    "name": "German-HDT",
+    "language": "German",
+    "was": 0.9101,
+    "n_categories": 14,
+    "n_tokens": 3455580
+  },
+  {
+    "name": "Spanish-AnCora",
+    "language": "Spanish",
+    "was": 0.9049,
+    "n_categories": 13,
+    "n_tokens": 560137
+  },
+  {
+    "name": "Czech-PDTC",
+    "language": "Czech",
+    "was": 0.8905,
+    "n_categories": 14,
+    "n_tokens": 3440052
+  },
+  {
+    "name": "Portuguese-CINTIL",
+    "language": "Portuguese",
+    "was": 0.8842,
+    "n_categories": 13,
+    "n_tokens": 475860
+  },
+  {
+    "name": "Russian-Taiga",
+    "language": "Russian",
+    "was": 0.8803,
+    "n_categories": 14,
+    "n_tokens": 1758937
+  },
+  {
+    "name": "Galician-CTG",
+    "language": "Galician",
+    "was": 0.869,
+    "n_categories": 13,
+    "n_tokens": 139122
+  },
+  {
+    "name": "Italian-ISDT",
+    "language": "Italian",
+    "was": 0.8664,
+    "n_categories": 14,
+    "n_tokens": 298338
+  },
+  {
+    "name": "Classical-Chinese-Kyoto",
+    "language": "Classical_Chinese",
+    "was": 0.8659,
+    "n_categories": 12,
+    "n_tokens": 433169
+  },
+  {
+    "name": "Dutch-LassySmall",
+    "language": "Dutch",
+    "was": 0.8586,
+    "n_categories": 12,
+    "n_tokens": 297065
+  },
+  {
+    "name": "Persian-PerDT",
+    "language": "Persian",
+    "was": 0.8565,
+    "n_categories": 14,
+    "n_tokens": 501776
+  },
+  {
+    "name": "Hebrew-HTB",
+    "language": "Hebrew",
+    "was": 0.8467,
+    "n_categories": 12,
+    "n_tokens": 160195
+  },
+  {
+    "name": "Polish-PDB",
+    "language": "Polish",
+    "was": 0.826,
+    "n_categories": 14,
+    "n_tokens": 349978
+  },
+  {
+    "name": "Latvian-LVTB",
+    "language": "Latvian",
+    "was": 0.8258,
+    "n_categories": 14,
+    "n_tokens": 330318
+  },
+  {
+    "name": "Slovenian-SSJ",
+    "language": "Slovenian",
+    "was": 0.8173,
+    "n_categories": 13,
+    "n_tokens": 267097
+  },
+  {
+    "name": "Icelandic-IcePaHC",
+    "language": "Icelandic",
+    "was": 0.8146,
+    "n_categories": 14,
+    "n_tokens": 985046
+  },
+  {
+    "name": "Bulgarian-BTB",
+    "language": "Bulgarian",
+    "was": 0.8112,
+    "n_categories": 13,
+    "n_tokens": 156149
+  },
+  {
+    "name": "Coptic-Scriptorium",
+    "language": "Coptic",
+    "was": 0.8095,
+    "n_categories": 13,
+    "n_tokens": 58974
+  },
+  {
+    "name": "Belarusian-HSE",
+    "language": "Belarusian",
+    "was": 0.8014,
+    "n_categories": 13,
+    "n_tokens": 305109
+  },
+  {
+    "name": "Indonesian-GSD",
+    "language": "Indonesian",
+    "was": 0.7997,
+    "n_categories": 13,
+    "n_tokens": 122019
+  },
+  {
+    "name": "Norwegian-Bokmaal",
+    "language": "Norwegian",
+    "was": 0.7992,
+    "n_categories": 14,
+    "n_tokens": 310221
+  },
+  {
+    "name": "Danish-DDT",
+    "language": "Danish",
+    "was": 0.7981,
+    "n_categories": 14,
+    "n_tokens": 100733
+  },
+  {
+    "name": "Estonian-EDT",
+    "language": "Estonian",
+    "was": 0.7979,
+    "n_categories": 13,
+    "n_tokens": 437788
+  },
+  {
+    "name": "Croatian-SET",
+    "language": "Croatian",
+    "was": 0.7975,
+    "n_categories": 13,
+    "n_tokens": 199409
+  },
+  {
+    "name": "Romanian-Nonstandard",
+    "language": "Romanian",
+    "was": 0.7854,
+    "n_categories": 14,
+    "n_tokens": 572436
+  },
+  {
+    "name": "Finnish-TDT",
+    "language": "Finnish",
+    "was": 0.7829,
+    "n_categories": 12,
+    "n_tokens": 202193
+  },
+  {
+    "name": "English-CHILDES",
+    "language": "English",
+    "was": 0.7785,
+    "n_categories": 14,
+    "n_tokens": 302740
+  },
+  {
+    "name": "Greek-GDT",
+    "language": "Greek",
+    "was": 0.7784,
+    "n_categories": 13,
+    "n_tokens": 63441
+  },
+  {
+    "name": "Hindi-HDTB",
+    "language": "Hindi",
+    "was": 0.7739,
+    "n_categories": 13,
+    "n_tokens": 351704
+  },
+  {
+    "name": "Irish-IDT",
+    "language": "Irish",
+    "was": 0.7717,
+    "n_categories": 13,
+    "n_tokens": 115990
+  },
+  {
+    "name": "Old-French-PROFITEROLE",
+    "language": "Old_French",
+    "was": 0.7687,
+    "n_categories": 13,
+    "n_tokens": 240335
+  },
+  {
+    "name": "Middle-French-PROFITEROLE",
+    "language": "Middle_French",
+    "was": 0.7681,
+    "n_categories": 13,
+    "n_tokens": 119001
+  },
+  {
+    "name": "Swedish-LinES",
+    "language": "Swedish",
+    "was": 0.7653,
+    "n_categories": 14,
+    "n_tokens": 102540
+  },
+  {
+    "name": "Afrikaans-AfriBooms",
+    "language": "Afrikaans",
+    "was": 0.7515,
+    "n_categories": 13,
+    "n_tokens": 49258
+  },
+  {
+    "name": "Chinese-GSD",
+    "language": "Chinese",
+    "was": 0.7469,
+    "n_categories": 13,
+    "n_tokens": 123289
+  },
+  {
+    "name": "Bororo-BDT",
+    "language": "Bororo",
+    "was": 0.7459,
+    "n_categories": 14,
+    "n_tokens": 160356
+  },
+  {
+    "name": "Welsh-CCG",
+    "language": "Welsh",
+    "was": 0.7423,
+    "n_categories": 13,
+    "n_tokens": 54712
+  },
+  {
+    "name": "Serbian-SET",
+    "language": "Serbian",
+    "was": 0.7394,
+    "n_categories": 13,
+    "n_tokens": 97673
+  },
+  {
+    "name": "Latin-ITTB",
+    "language": "Latin",
+    "was": 0.7375,
+    "n_categories": 13,
+    "n_tokens": 450517
+  },
+  {
+    "name": "Wolof-WTB",
+    "language": "Wolof",
+    "was": 0.735,
+    "n_categories": 12,
+    "n_tokens": 44258
+  },
+  {
+    "name": "Ancient-Hebrew-PTNK",
+    "language": "Ancient_Hebrew",
+    "was": 0.7333,
+    "n_categories": 14,
+    "n_tokens": 145866
+  },
+  {
+    "name": "Armenian-ArmTDP",
+    "language": "Armenian",
+    "was": 0.7327,
+    "n_categories": 14,
+    "n_tokens": 104293
+  },
+  {
+    "name": "Western-Armenian-ArmTDP",
+    "language": "Western_Armenian",
+    "was": 0.7313,
+    "n_categories": 14,
+    "n_tokens": 122752
+  },
+  {
+    "name": "Scottish-Gaelic-ARCOSG",
+    "language": "Scottish_Gaelic",
+    "was": 0.7242,
+    "n_categories": 14,
+    "n_tokens": 90016
+  },
+  {
+    "name": "Ancient-Greek-PROIEL",
+    "language": "Ancient_Greek",
+    "was": 0.721,
+    "n_categories": 13,
+    "n_tokens": 214005
+  },
+  {
+    "name": "Georgian-GLC",
+    "language": "Georgian",
+    "was": 0.7201,
+    "n_categories": 12,
+    "n_tokens": 60182
+  },
+  {
+    "name": "Slovak-SNK",
+    "language": "Slovak",
+    "was": 0.7165,
+    "n_categories": 13,
+    "n_tokens": 106372
+  },
+  {
+    "name": "Basque-BDT",
+    "language": "Basque",
+    "was": 0.7133,
+    "n_categories": 12,
+    "n_tokens": 121443
+  },
+  {
+    "name": "Old-East-Slavic-TOROT",
+    "language": "Old_East_Slavic",
+    "was": 0.7128,
+    "n_categories": 13,
+    "n_tokens": 246850
+  },
+  {
+    "name": "Ukrainian-IU",
+    "language": "Ukrainian",
+    "was": 0.7108,
+    "n_categories": 14,
+    "n_tokens": 122750
+  },
+  {
+    "name": "Lithuanian-ALKSNIS",
+    "language": "Lithuanian",
+    "was": 0.7064,
+    "n_categories": 13,
+    "n_tokens": 70047
+  },
+  {
+    "name": "Old-Church-Slavonic-PROIEL",
+    "language": "Old_Church_Slavonic",
+    "was": 0.7035,
+    "n_categories": 13,
+    "n_tokens": 198843
+  },
+  {
+    "name": "Urdu-UDTB",
+    "language": "Urdu",
+    "was": 0.702,
+    "n_categories": 13,
+    "n_tokens": 138077
+  },
+  {
+    "name": "Egyptian-PC",
+    "language": "Egyptian",
+    "was": 0.686,
+    "n_categories": 14,
+    "n_tokens": 34234
+  },
+  {
+    "name": "Naija-NSC",
+    "language": "Naija",
+    "was": 0.6786,
+    "n_categories": 14,
+    "n_tokens": 140837
+  },
+  {
+    "name": "Turkish-Penn",
+    "language": "Turkish",
+    "was": 0.6752,
+    "n_categories": 13,
+    "n_tokens": 183612
+  },
+  {
+    "name": "Haitian-Creole-Adolphe",
+    "language": "Haitian_Creole",
+    "was": 0.6564,
+    "n_categories": 13,
+    "n_tokens": 71734
+  },
+  {
+    "name": "Classical-Armenian-CAVaL",
+    "language": "Classical_Armenian",
+    "was": 0.6542,
+    "n_categories": 14,
+    "n_tokens": 99664
+  },
+  {
+    "name": "Pomak-Philotis",
+    "language": "Pomak",
+    "was": 0.6478,
+    "n_categories": 13,
+    "n_tokens": 34348
+  },
+  {
+    "name": "Vietnamese-VTB",
+    "language": "Vietnamese",
+    "was": 0.6371,
+    "n_categories": 13,
+    "n_tokens": 58069
+  },
+  {
+    "name": "North-Sami-Giella",
+    "language": "North_Sami",
+    "was": 0.6324,
+    "n_categories": 12,
+    "n_tokens": 26845
+  },
+  {
+    "name": "Khoekhoe-KDT",
+    "language": "Khoekhoe",
+    "was": 0.6272,
+    "n_categories": 14,
+    "n_tokens": 29007
+  },
+  {
+    "name": "Bambara-CRB",
+    "language": "Bambara",
+    "was": 0.627,
+    "n_categories": 14,
+    "n_tokens": 13823
+  },
+  {
+    "name": "Gothic-PROIEL",
+    "language": "Gothic",
+    "was": 0.6255,
+    "n_categories": 12,
+    "n_tokens": 55336
+  },
+  {
+    "name": "Low-Saxon-LSDC",
+    "language": "Low_Saxon",
+    "was": 0.6207,
+    "n_categories": 13,
+    "n_tokens": 22639
+  },
+  {
+    "name": "Hungarian-Szeged",
+    "language": "Hungarian",
+    "was": 0.62,
+    "n_categories": 13,
+    "n_tokens": 42032
+  },
+  {
+    "name": "Marathi-CMUPAN",
+    "language": "Marathi",
+    "was": 0.6159,
+    "n_categories": 12,
+    "n_tokens": 118198
+  },
+  {
+    "name": "Occitan-TTB",
+    "language": "Occitan",
+    "was": 0.6127,
+    "n_categories": 14,
+    "n_tokens": 25619
+  },
+  {
+    "name": "Yiddish-YiTB",
+    "language": "Yiddish",
+    "was": 0.6096,
+    "n_categories": 13,
+    "n_tokens": 28348
+  },
+  {
+    "name": "Sindhi-Isra",
+    "language": "Sindhi",
+    "was": 0.6081,
+    "n_categories": 14,
+    "n_tokens": 95227
+  },
+  {
+    "name": "Kyrgyz-KTMU",
+    "language": "Kyrgyz",
+    "was": 0.5993,
+    "n_categories": 8,
+    "n_tokens": 24128
+  },
+  {
+    "name": "Breton-KEB",
+    "language": "Breton",
+    "was": 0.5952,
+    "n_categories": 12,
+    "n_tokens": 10006
+  },
+  {
+    "name": "Manx-Cadhan",
+    "language": "Manx",
+    "was": 0.5952,
+    "n_categories": 13,
+    "n_tokens": 20725
+  },
+  {
+    "name": "Xibe-XDT",
+    "language": "Xibe",
+    "was": 0.5936,
+    "n_categories": 13,
+    "n_tokens": 15401
+  },
+  {
+    "name": "Akkadian-RIAO",
+    "language": "Akkadian",
+    "was": 0.5838,
+    "n_categories": 11,
+    "n_tokens": 23165
+  },
+  {
+    "name": "Western-Sierra-Puebla-Nahuatl-MesoTree",
+    "language": "Western_Sierra_Puebla_Nahuatl",
+    "was": 0.5776,
+    "n_categories": 13,
+    "n_tokens": 19535
+  },
+  {
+    "name": "Kiche-IU",
+    "language": "Kiche",
+    "was": 0.5681,
+    "n_categories": 12,
+    "n_tokens": 10013
+  },
+  {
+    "name": "Sanskrit-Vedic",
+    "language": "Sanskrit",
+    "was": 0.5678,
+    "n_categories": 13,
+    "n_tokens": 206440
+  },
+  {
+    "name": "Nheengatu-CompLin",
+    "language": "Nheengatu",
+    "was": 0.5575,
+    "n_categories": 14,
+    "n_tokens": 26848
+  },
+  {
+    "name": "Korean-Kaist",
+    "language": "Korean",
+    "was": 0.5545,
+    "n_categories": 13,
+    "n_tokens": 350090
+  },
+  {
+    "name": "Abkhaz-AbNC",
+    "language": "Abkhaz",
+    "was": 0.5473,
+    "n_categories": 10,
+    "n_tokens": 13054
+  },
+  {
+    "name": "Zaar-Autogramm",
+    "language": "Zaar",
+    "was": 0.5343,
+    "n_categories": 14,
+    "n_tokens": 20952
+  },
+  {
+    "name": "Erzya-JR",
+    "language": "Erzya",
+    "was": 0.5286,
+    "n_categories": 14,
+    "n_tokens": 20809
+  },
+  {
+    "name": "Gheg-GPS",
+    "language": "Gheg",
+    "was": 0.522,
+    "n_categories": 13,
+    "n_tokens": 15990
+  },
+  {
+    "name": "Northern-Kurdish-Kurmanji",
+    "language": "Northern_Kurdish",
+    "was": 0.5028,
+    "n_categories": 14,
+    "n_tokens": 10259
+  },
+  {
+    "name": "Buryat-BDT",
+    "language": "Buryat",
+    "was": 0.4934,
+    "n_categories": 13,
+    "n_tokens": 10187
+  },
+  {
+    "name": "Ottoman-Turkish-DUDU",
+    "language": "Ottoman_Turkish",
+    "was": 0.4914,
+    "n_categories": 14,
+    "n_tokens": 22027
+  },
+  {
+    "name": "Kazakh-KTB",
+    "language": "Kazakh",
+    "was": 0.4885,
+    "n_categories": 12,
+    "n_tokens": 10536
+  },
+  {
+    "name": "Arabic-NYUAD",
+    "language": "Arabic",
+    "was": 0.4858,
+    "n_categories": 14,
+    "n_tokens": 738889
+  },
+  {
+    "name": "Hausa-NorthernAutogramm",
+    "language": "Hausa",
+    "was": 0.4849,
+    "n_categories": 14,
+    "n_tokens": 15424
+  },
+  {
+    "name": "Chintang-CTNTB",
+    "language": "Chintang",
+    "was": 0.4801,
+    "n_categories": 14,
+    "n_tokens": 14631
+  },
+  {
+    "name": "Sicilian-STB",
+    "language": "Sicilian",
+    "was": 0.464,
+    "n_categories": 13,
+    "n_tokens": 11204
+  },
+  {
+    "name": "Uyghur-UDT",
+    "language": "Uyghur",
+    "was": 0.4311,
+    "n_categories": 14,
+    "n_tokens": 40236
+  },
+  {
+    "name": "Javanese-CSUI",
+    "language": "Javanese",
+    "was": 0.4276,
+    "n_categories": 13,
+    "n_tokens": 14343
+  },
+  {
+    "name": "Cantonese-HK",
+    "language": "Cantonese",
+    "was": 0.4275,
+    "n_categories": 14,
+    "n_tokens": 13918
+  },
+  {
+    "name": "Maghrebi-Arabic-French-Arabizi",
+    "language": "Maghrebi_Arabic_French",
+    "was": 0.4042,
+    "n_categories": 14,
+    "n_tokens": 19793
+  },
+  {
+    "name": "Amharic-ATT",
+    "language": "Amharic",
+    "was": 0.3899,
+    "n_categories": 12,
+    "n_tokens": 10010
+  },
+  {
+    "name": "Highland-Puebla-Nahuatl-ITML",
+    "language": "Highland_Puebla_Nahuatl",
+    "was": 0.3816,
+    "n_categories": 13,
+    "n_tokens": 10088
+  },
+  {
+    "name": "Upper-Sorbian-UFAL",
+    "language": "Upper_Sorbian",
+    "was": 0.3518,
+    "n_categories": 13,
+    "n_tokens": 11167
+  },
+  {
+    "name": "Alemannic-DIVITAL",
+    "language": "Alemannic",
+    "was": 0.0,
+    "n_categories": 13,
+    "n_tokens": 19743
+  },
+  {
+    "name": "Bavarian-MaiBaam",
+    "language": "Bavarian",
+    "was": 0.0,
+    "n_categories": 13,
+    "n_tokens": 15036
+  },
+  {
+    "name": "Beja-Autogramm",
+    "language": "Beja",
+    "was": 0.0,
+    "n_categories": 14,
+    "n_tokens": 11948
+  },
+  {
+    "name": "Faroese-FarPaHC",
+    "language": "Faroese",
+    "was": 0.0,
+    "n_categories": 11,
+    "n_tokens": 40484
+  },
+  {
+    "name": "Japanese-BCCWJ",
+    "language": "Japanese",
+    "was": 0.0,
+    "n_categories": 14,
+    "n_tokens": 1253903
+  },
+  {
+    "name": "Maltese-MUDT",
+    "language": "Maltese",
+    "was": 0.0,
+    "n_categories": 12,
+    "n_tokens": 44162
+  },
+  {
+    "name": "Old-Occitan-CorAG",
+    "language": "Old_Occitan",
+    "was": 0.0,
+    "n_categories": 8,
+    "n_tokens": 52539
+  },
+  {
+    "name": "Thai-TUD",
+    "language": "Thai",
+    "was": 0.0,
+    "n_categories": 13,
+    "n_tokens": 77215
+  }
+]
