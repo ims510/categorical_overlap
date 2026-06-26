@@ -5,21 +5,6 @@
     "n_categories": 13
   },
   {
-    "name": "Italian-ISDT",
-    "was": 0.8664,
-    "n_categories": 14
-  },
-  {
-    "name": "Indonesian-GSD",
-    "was": 0.7997,
-    "n_categories": 13
-  },
-  {
-    "name": "Japanese-GSD",
-    "was": 0.7484,
-    "n_categories": 13
-  },
-  {
     "name": "Wolof-WTB",
     "was": 0.735,
     "n_categories": 12
