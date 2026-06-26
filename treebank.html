@@ -275,10 +275,6 @@ function renderMatrix(which) {
     x:           cats,       // columns = Rival
     y:           cats,       // rows    = Original
     z:           vals,
-<<<<<<< HEAD
-    colorscale:  "YlOrRd",
-    reversescale: false,
-=======
     colorscale:  [
       [0,    "rgb(255,255,229)"],
       [0.25, "rgb(254,217,118)"],
@@ -286,7 +282,6 @@ function renderMatrix(which) {
       [0.75, "rgb(217,95,14)"],
       [1,    "rgb(127,39,4)"],
     ],
->>>>>>> fe908b4 (small esthetic plot changes)
     hoverongaps: false,
     text:        vals.map(row => row.map(v => v.toFixed(2))),
     texttemplate:"%{text}",
