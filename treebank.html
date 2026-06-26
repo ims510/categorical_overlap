@@ -132,7 +132,8 @@
 <nav>
   <a href="index.html">← All Treebanks</a>
   <span class="sep">/</span>
-  <span id="nav-name" style="color:#fff"></span>
+  <span id="nav-name" style="color:#fff;flex:1"></span>
+  <a href="about.html" style="margin-left:auto">About</a>
 </nav>
 
 <header>
@@ -226,6 +227,14 @@ function showError(msg) {
   document.getElementById("loading").style.display = "none";
 }
 
+// ── token-count formatter ──────────────────────────────────────────────────
+function formatTokens(n) {
+  if (!n || n < 0) return "—";
+  if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (n >= 1e3) return Math.round(n / 1e3) + 'k';
+  return String(n);
+}
+
 // ── Main load ──────────────────────────────────────────────────────────────
 async function init() {
   if (!tbName) { showError("No treebank specified in URL."); return; }
@@ -255,10 +264,14 @@ async function init() {
 // ── Header meta chips ──────────────────────────────────────────────────────
 function buildHeaderMeta(entry) {
   const rank = allIndex.findIndex(d => d.name === tbName) + 1;
+  const sizeTitle = entry.n_tokens
+    ? `${entry.n_tokens.toLocaleString()} tokens`
+    : "size unknown";
   document.getElementById("header-meta").innerHTML = `
     <span class="meta-chip">WAS <strong>${(entry.was||0).toFixed(3)}</strong></span>
     <span class="meta-chip">Rank <strong>${rank} / ${allIndex.length}</strong></span>
     <span class="meta-chip">Categories <strong>${entry.n_categories||"—"}</strong></span>
+    <span class="meta-chip" title="${sizeTitle}">Size <strong>${formatTokens(entry.n_tokens)}</strong></span>
   `;
 }
 

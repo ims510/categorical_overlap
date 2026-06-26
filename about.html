@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Categorical Stability Explorer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: #f8f9fa; color: #212529; min-height: 100vh;
+      line-height: 1.55;
+    }
+
+    nav {
+      background: #1a1a2e; padding: .6rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    nav a { color: #aab; text-decoration: none; font-size: .9rem; }
+    nav a:hover { color: #fff; }
+    nav .sep { color: #555; }
+
+    header {
+      background: #1a1a2e; color: #eee;
+      padding: 2rem 2.5rem 1.5rem;
+      border-bottom: 3px solid #e63946;
+    }
+    header h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: .4rem; }
+    header p  { font-size: .95rem; opacity: .75; max-width: 65ch; line-height: 1.5; }
+
+    .container { max-width: 800px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+
+    .section { margin-bottom: 2.5rem; }
+    .section-title {
+      font-size: 1rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .06em; color: #4361ee; margin-bottom: 1rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .section-title::after { content: ""; flex: 1; height: 1px; background: #dee2e6; }
+
+    .card {
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      padding: 1.5rem 1.8rem; margin-bottom: 1rem;
+    }
+    .card p     { margin-bottom: .8rem; }
+    .card p:last-child { margin-bottom: 0; }
+    .card h3 {
+      font-size: 1rem; font-weight: 700; color: #212529;
+      margin: 1.2rem 0 .5rem;
+    }
+    .card h3:first-child { margin-top: 0; }
+    .card ul { margin: .5rem 0 .8rem 1.4rem; }
+    .card li { margin-bottom: .3rem; }
+    .card code {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: .85em; background: #f1f3f5; padding: .1rem .35rem;
+      border-radius: 4px;
+    }
+    .card a { color: #4361ee; }
+
+    .card img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px;
+      margin: 1rem 0;
+      border: 1px solid #dee2e6;
+      display: block;
+    }
+    .citation-block {
+      background: #f8f9fa; border-left: 4px solid #4361ee;
+      padding: 1rem 1.2rem; border-radius: 4px;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: .82rem; line-height: 1.6;
+      white-space: pre-wrap; word-break: break-word;
+      margin: .8rem 0;
+    }
+
+    .contact-row {
+      display: flex; align-items: center; gap: .8rem;
+      margin-top: .5rem; font-size: .92rem;
+    }
+    .contact-row strong { min-width: 5em; color: #495057; }
+
+    .reliability-note {
+      background: #fff5e6; border-left: 4px solid #f59f00;
+      padding: 1rem 1.2rem; border-radius: 4px;
+      font-size: .9rem; margin-top: .6rem;
+    }
+
+    footer { text-align: center; padding: 2rem; color: #aaa; font-size: .82rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html">← All Treebanks</a>
+  <span class="sep">/</span>
+  <span style="color:#fff">About</span>
+</nav>
+
+<header>
+  <h1>About this project</h1>
+  <p>
+    A distributional approach to measuring grammatical category overlap
+    across Universal Dependencies treebanks.
+  </p>
+</header>
+
+<div class="container">
+
+  <!-- ── What this is ────────────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">What this is</div>
+    <div class="card">
+      <p>
+        Part-of-speech categories are usually treated as discrete: a word is
+        either a <code>NOUN</code> or a <code>VERB</code>, never partly both.
+        In practice, lexical items often sit between categories: gerunds
+        between noun and verb or participles between verb and adjective. 
+        This approach quantifies that ambiguity at the level of an entire treebank.
+      </p>
+      <p>
+        For each treebank, we build a feature vector per <code>(lemma, POS)</code>
+        unit from its UD dependency annotations, compute cosine-similarity
+        neighbourhoods, and aggregate the result into two complementary views:
+        a <strong>stability matrix</strong> (how homogeneous each category's
+        neighbourhood is) and an <strong>intruder matrix</strong> (which other
+        category each one most often leaks into).
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Methodology ─────────────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">How it works</div>
+    <div class="card">
+
+      <h3>1. Feature vectors</h3>
+      <p>
+        Each lexical unit is represented as a vector over the
+        morpho-syntactic features that appear in its syntactic context in the treebank. The syntactic context is defined as the parent, 
+        the children, and the node immediately before and after.
+        
+        <img src="assets/syntactic_context.png" alt="Diagram showing syntactic context" />
+      </p>
+      <p>
+        All features on these nodes are selected.Units with fewer than ten occurrences are
+        dropped to limit noise. This creates a feature matrix where the lines are lexical units and the columns are extracted features 
+        in the format "parent.upos=VERB" or "child.Number=Sing".
+        The values are the proportion of occurences of that lexical unit that have that feature.
+
+        <img src="assets/feature_matrix.png" alt="Diagram showing feature matrix" />
+      </p>
+
+      <h3>2. Neighbourhoods</h3>
+      <p>
+        For every lexical unit we compute cosine similarity to every other
+        unit in the treebank, and keep the top 20 neighbours whose similarity
+        exceeds 0.7. The neighbourhood is the unit's distributional
+        signature.
+      </p>
+
+      <h3>3. What causes the overlap?</h3>
+      <p>
+        Bridge words are lexical units responsible for the overlap between two categories. 
+        The annotation scheme places them in category A, but distributional data pulls them towards category B.
+        To isolate them, we calculate two measures for each lexical unit:
+        <ul>
+          <li><strong>Purity</strong>: the proportion of neighbours that share the unit's own category.</li>
+          <li><strong>Entropy</strong>: the distributional spread of the unit's neighbours across all categories.</li>
+        </ul>
+
+        The image below shows the intuition behind these two measures. 
+
+        <img src="assets/purity_entropy.png" alt="Diagram showing purity and entropy" />
+
+        For each bridge
+        word we also report the <strong>pulling features</strong>: the
+        individual feature dimensions on which the word resembles the rival
+        category's prototype most strongly.
+      </p>
+
+      <h3>4. Stability and intruder matrices</h3>
+      <p>
+        Aggregating across all units, we build a square category-by-category
+        matrix. The <strong>stability matrix</strong> shows the internal cohesion of categories. The higher the value
+        on the diagonal, the more cohesive the category is. The <strong>intruder matrix</strong>
+        is the same matrix with the diagonal removed and rows renormalised,
+        which makes the strongest rival category for each row stand out
+        visually.
+      </p>
+
+      <h3>5. Weighted Average Stability</h3>
+      <p>
+        A single scalar per treebank: the diagonal of the stability matrix
+        weighted by each category's relative frequency. WAS ranges between
+        0 and 1; values close to 1 mean every category has a tight,
+        homogeneous neighbourhood, while lower values indicate more
+        cross-categorical overlap. It's a quick comparable summary across
+        treebanks, with the understanding that what it summarises is
+        always one specific distributional view of a treebank's annotation.
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Reliability ─────────────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">Interpreting the results</div>
+    <div class="card">
+      <p>
+        WAS scores depend on three things: the language, the treebank's
+        annotation style, and its <strong>size</strong>. The token count is
+        shown next to every treebank for exactly this reason. Smaller
+        treebanks produce noisier feature vectors and less reliable
+        neighbourhoods, so their scores should be read with more caution.
+      </p>
+      <p>
+        For each language, the largest available treebank was selected.
+        When comparing two treebanks of very different sizes, the WAS
+        difference is partly a real linguistic signal and partly a
+        statistical artefact of the smaller one.
+      </p>
+      <div class="reliability-note">
+        <strong>Note:</strong> A low WAS doesn't necessarily indicate a
+        problem with the treebank, as some languages and annotation schemes
+        naturally permit more categorical fluidity than others. The bridge
+        word explorer is the right place to investigate what's actually
+        happening.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Citation ────────────────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">Citation</div>
+    <div class="card">
+      <p>
+        If you use these results in your work, please cite the following
+        paper:
+      </p>
+      <div class="citation-block">Silai, I.-M. (2026). Fuzzy Boundaries: A Distributional Approach to POS Overlap Across Typologically Diverse Treebanks. In <i>Proceedings of TALN-RJC 2026</i>, Nantes.</div>
+  </div>
+
+  <!-- ── Contact ─────────────────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">Contact</div>
+    <div class="card">
+      <p>
+        Questions, bug reports, or interest in extending this approach to
+        other treebanks or feature spaces are very welcome.
+      </p>
+      <div class="contact-row"><strong>Author:</strong> Ioana-Madalina Silai</div>
+      <div class="contact-row"><strong>Affiliation:</strong> MoDyCo, Université Paris Nanterre</div>
+      <div class="contact-row">
+        <strong>Email:</strong> <a href="mailto:[imsilai@parisnanterre.fr]">[imsilai@parisnanterre.fr]</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Data generated from <a href="https://universaldependencies.org/" style="color:#4361ee">Universal Dependencies</a> treebanks ·
+  <a href="index.html" style="color:#4361ee">Back to explorer</a>
+</footer>
+
+</body>
+</html>
