@@ -175,7 +175,7 @@ let allData = [];
 let sortCol = "was", sortAsc = false;
 
 async function load() {
-  const res  = await fetch("data/index.json");
+  const res  = await fetch(`data/index.json?v=${Date.now()}`, { cache: "no-store" });
   allData    = await res.json();
   allData.forEach((d, i) => d.rank = i + 1);
 

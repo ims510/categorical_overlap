@@ -215,7 +215,8 @@ let currentMatrix = "stability";
 
 // ── Fetch helpers ──────────────────────────────────────────────────────────
 async function fetchJSON(path) {
-  const r = await fetch(path);
+  const url = `${path}${path.includes("?") ? "&" : "?"}v=${Date.now()}`;
+  const r = await fetch(url, { cache: "no-store" });
   if (!r.ok) throw new Error(`HTTP ${r.status} for ${path}`);
   return r.json();
 }
