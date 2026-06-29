@@ -698,61 +698,6 @@
     "was": 0.3518,
     "n_categories": 13,
     "n_tokens": 11167
-  },
-  {
-    "name": "Alemannic-DIVITAL",
-    "language": "Alemannic",
-    "was": 0.0,
-    "n_categories": 13,
-    "n_tokens": 19743
-  },
-  {
-    "name": "Bavarian-MaiBaam",
-    "language": "Bavarian",
-    "was": 0.0,
-    "n_categories": 13,
-    "n_tokens": 15036
-  },
-  {
-    "name": "Beja-Autogramm",
-    "language": "Beja",
-    "was": 0.0,
-    "n_categories": 14,
-    "n_tokens": 11948
-  },
-  {
-    "name": "Faroese-FarPaHC",
-    "language": "Faroese",
-    "was": 0.0,
-    "n_categories": 11,
-    "n_tokens": 40484
-  },
-  {
-    "name": "Japanese-BCCWJ",
-    "language": "Japanese",
-    "was": 0.0,
-    "n_categories": 14,
-    "n_tokens": 1253903
-  },
-  {
-    "name": "Maltese-MUDT",
-    "language": "Maltese",
-    "was": 0.0,
-    "n_categories": 12,
-    "n_tokens": 44162
-  },
-  {
-    "name": "Old-Occitan-CorAG",
-    "language": "Old_Occitan",
-    "was": 0.0,
-    "n_categories": 8,
-    "n_tokens": 52539
-  },
-  {
-    "name": "Thai-TUD",
-    "language": "Thai",
-    "was": 0.0,
-    "n_categories": 13,
-    "n_tokens": 77215
   }
+
 ]
