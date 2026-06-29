@@ -127,8 +127,6 @@
     <div class="stat"><div class="label">Lowest WAS</div><div class="value" id="s-min">—</div></div>
   </div>
 
-  <div id="chart"></div>
-
   <div class="search-row">
     <input id="search" type="text" placeholder="Filter treebanks…" />
     <span id="count-label" style="font-size:.85rem;color:#6c757d;"></span>
@@ -147,6 +145,8 @@
     </thead>
     <tbody id="tbody"></tbody>
   </table>
+
+  <div id="chart"></div>
 </div>
 
 <footer>
@@ -273,8 +273,6 @@ function renderTable(data) {
 
   const tbody = document.getElementById("tbody");
   tbody.innerHTML = rows.map((d, i) => {
-    const fillColour = wasColour(d.was);
-    const pct = ((d.was - 0.6) / 0.4 * 100).toFixed(1);
     const nExtra = (d.spaces ? d.spaces.length : 1) - 1;
     const badge  = nExtra > 0
       ? `<span class="badge" title="${d.spaces.join(', ')}">+${nExtra} ${nExtra === 1 ? 'space' : 'spaces'}</span>`
@@ -283,14 +281,7 @@ function renderTable(data) {
       <tr>
         <td style="color:#888;font-size:.8rem">${i+1}</td>
         <td><strong>${d.name}</strong>${badge}</td>
-        <td>
-          <div class="was-bar">
-            <div class="was-track">
-              <div class="was-fill" style="width:${pct}%;background:${fillColour}"></div>
-            </div>
-            <span class="was-val" style="color:${fillColour}">${d.was.toFixed(3)}</span>
-          </div>
-        </td>
+        <td style="font-variant-numeric:tabular-nums;font-weight:600">${d.was.toFixed(3)}</td>
         <td title="${(d.n_tokens || 0).toLocaleString()} tokens"
             style="font-variant-numeric:tabular-nums">${formatTokens(d.n_tokens)}</td>
         <td>${d.n_categories}</td>
